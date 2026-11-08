@@ -1,0 +1,23 @@
+tmp/
+.worktrees/
+bin/
+dist/
+.env*
+.DS_Store
+.claude/settings.local.json
+.claude/worktrees/
+
+# Python tooling
+.venv/
+__pycache__/
+.ruff_cache/
+.pytest_cache/
+.coverage*
+coverage.xml
+
+# Ansible
+*.retry
+.ansible/
+
+# Agents draft PRs here; the PR script lints it and opens the PR from it.
+.github/PULL_REQUEST_DRAFT.md

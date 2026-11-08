@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Tony Burns
+
+version = 1
+
+# Everything is Apache-2.0, so LICENSES/ holds one license text. Files that
+# take a comment carry a two-line header in the file itself. The annotations
+# below cover files that cannot hold a comment and files where a header would
+# change what GitHub or a tool reads.
+
+# JSON cannot hold comments.
+[[annotations]]
+path = ["**/*.json"]
+SPDX-FileCopyrightText = "Tony Burns"
+SPDX-License-Identifier = "Apache-2.0"
+
+# LICENSE is the verbatim license text that GitHub's license detection reads.
+# CODEOWNERS and README.md render on GitHub, and a header comment in the pull
+# request template would land in every PR body.
+[[annotations]]
+path = [
+  "LICENSE",
+  "README.md",
+  ".github/CODEOWNERS",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".gitattributes",
+  ".gitignore",
+  ".editorconfig",
+]
+SPDX-FileCopyrightText = "Tony Burns"
+SPDX-License-Identifier = "Apache-2.0"
+
+# Agent instruction files are read verbatim by the harnesses.
+[[annotations]]
+path = ["**/AGENTS.md", "**/CLAUDE.md"]
+SPDX-FileCopyrightText = "Tony Burns"
+SPDX-License-Identifier = "Apache-2.0"

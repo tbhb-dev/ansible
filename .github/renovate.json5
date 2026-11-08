@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright Tony Burns
+
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  // The preset tracks tbhb-dev/renovate-config's main branch, pinned by
+  // commit; Renovate bumps the pin (the "renovate-config" group).
+  extends: [
+    "github>tbhb-dev/renovate-config//default.json5#c993c230872876912187a2fb8df69d94778be799", // main
+  ],
+}
