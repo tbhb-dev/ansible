@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Tony Burns
+
+---
+# Sanity and unit tests for the collections. ansible-test only works from
+# inside ansible_collections/<namespace>/<name>/, so each job runs there.
+# The `conclusion` job is the one required check in the main ruleset.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  ANSIBLE_CORE: "ansible-core>=2.21,<2.22"
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ansible_collections/tbhb/dsm
+    steps:
+      # yamllint disable-line rule:line-length
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      # yamllint disable-line rule:line-length
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.13"
+      - run: python -m pip install "$ANSIBLE_CORE"
+      - run: ansible-test sanity --venv --requirements --python 3.13
+
+  units:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+    defaults:
+      run:
+        working-directory: ansible_collections/tbhb/dsm
+    steps:
+      # yamllint disable-line rule:line-length
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      # yamllint disable-line rule:line-length
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install "$ANSIBLE_CORE"
+      - run: >-
+          ansible-test units --venv --requirements
+          --python ${{ matrix.python }}
+
+  conclusion:
+    # Runs even when a needed job failed or was cancelled, and fails unless
+    # every one of them succeeded. A skipped job counts as a failure.
+    if: ${{ always() }}
+    needs: [sanity, units]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every job to have succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "needed job results: ${RESULTS}"
+          test -n "${RESULTS}"
+          for result in ${RESULTS}; do
+            test "${result}" = success || exit 1
+          done

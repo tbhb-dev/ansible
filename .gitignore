@@ -21,3 +21,6 @@ coverage.xml
 
 # Agents draft PRs here; the PR script lints it and opens the PR from it.
 .github/PULL_REQUEST_DRAFT.md
+
+# ansible-test output
+**/tests/output/

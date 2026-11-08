@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Tony Burns
+
+---
+namespace: tbhb
+name: dsm
+version: 0.1.0
+readme: README.md
+authors:
+  - Tony Burns
+description: >-
+  Read-only modules for Synology DSM that run synowebapi on the managed node.
+license:
+  - Apache-2.0
+repository: https://github.com/tbhb-dev/ansible
+issues: https://github.com/tbhb-dev/ansible/issues
+tags:
+  - synology
+  - dsm
+  - nas
+  - storage

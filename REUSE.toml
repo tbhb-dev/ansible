@@ -21,6 +21,8 @@ SPDX-License-Identifier = "Apache-2.0"
 path = [
   "LICENSE",
   "README.md",
+  "**/README.md",
+  "**/tests/sanity/ignore-*.txt",
   ".github/CODEOWNERS",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".gitattributes",
