@@ -21,3 +21,15 @@ coverage.xml
 
 # Agents draft PRs here; the PR script lints it and opens the PR from it.
 .github/PULL_REQUEST_DRAFT.md
+
+# ansible-test output
+**/tests/output/
+# vale sync writes the synced style packages and templates under .vale/;
+# only the project's own style and vocabulary are tracked.
+.vale/*
+!.vale/project/
+!.vale/config/
+.vale/config/*
+!.vale/config/vocabularies/
+.vale/config/vocabularies/*
+!.vale/config/vocabularies/project/

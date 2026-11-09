@@ -1,0 +1,4 @@
+plugins/modules/group_info.py validate-modules:missing-gplv3-license
+plugins/modules/share_info.py validate-modules:missing-gplv3-license
+plugins/modules/share_quota_info.py validate-modules:missing-gplv3-license
+plugins/modules/user_info.py validate-modules:missing-gplv3-license
