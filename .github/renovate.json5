@@ -9,4 +9,19 @@
   extends: [
     "github>tbhb-dev/renovate-config//default.json5#c993c230872876912187a2fb8df69d94778be799", // main
   ],
+
+  packageRules: [
+    {
+      // The python-version input of actions/setup-python stays where the
+      // workflow sets it. ansible-core 2.21's ansible-test runs only on
+      // Python 3.12, 3.13 and 3.14, and the sanity job passes the same
+      // version to `ansible-test --python`, which Renovate can't change with
+      // it. Move both by hand when the ansible-core range moves.
+      description: "Hold setup-python's python-version for ansible-test",
+      matchManagers: ["github-actions"],
+      matchDepTypes: ["uses-with"],
+      matchDepNames: ["python"],
+      enabled: false,
+    },
+  ],
 }
