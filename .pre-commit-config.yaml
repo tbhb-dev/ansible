@@ -1,0 +1,93 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Copyright Tony Burns
+
+# Git hooks for this clone, installed by `tbhbdev alpha install`. This
+# repository has no Bazel, so the lint hooks come from their upstream hook
+# repositories, each pinned to a release tag, instead of the bazel_env shims
+# that the Bazel-based repositories call. They are the fast per-file subset.
+default_stages: [pre-commit]
+
+# Never touch agent worktrees, scratch work, or test fixtures (failure-proof
+# fixtures are deliberately malformed).
+exclude: |
+  (?x)^(
+    tmp/|\.worktrees/
+    |(.*/)?testdata/
+  )
+
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+        name: gitleaks (staged changes)
+        entry: gitleaks git --pre-commit --staged --redact --no-banner --config .gitleaks.toml
+
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v6.2.0
+    hooks:
+      - id: reuse-lint-file
+
+  # Line length is off because the repository writes each Markdown paragraph and
+  # YAML string on one line.
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict, -d, "{extends: relaxed, rules: {line-length: disable}}"]
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  # The commit message: secrets, then the Conventional Commits header. These
+  # run from `tbhbdev alpha install`'s plain commit-msg hook, which chains
+  # prek's commit-msg stage after the identity check. cog has no hook
+  # repository, so it comes from PATH like the other repositories' shims.
+  - repo: local
+    hooks:
+      - id: gitleaks-commit-msg
+        name: gitleaks (commit message)
+        language: system
+        entry: bash -c 'gitleaks stdin --redact --no-banner --config .gitleaks.toml < "$1"' --
+        stages: [commit-msg]
+        always_run: true
+      - id: conventional-commits
+        name: Conventional Commits
+        language: system
+        entry: cog verify --file
+        stages: [commit-msg]
+        always_run: true
+
+  # Only stamp-docs runs under prek. `tbhbdev alpha install` installs the
+  # trailer, check and consume hooks (prepare-commit-msg, commit-msg,
+  # post-commit) as plain git hooks, because prek stashes unstaged changes
+  # around every stage and fails a hook when the work tree changes while it
+  # runs, which a concurrent agent's edit does.
+  #
+  # stamp-docs rewrites the staged blob and the work-tree file together, so
+  # prek's modified-files check passes. With unstaged edits next to the
+  # inserted `generated:` block the work-tree rewrite can conflict: `git add`
+  # the whole file or stash first.
+  - repo: local
+    hooks:
+      - id: agent-identity-stamp-docs
+        name: agent identity stamp docs
+        language: system
+        entry: tbhbdev alpha identity stamp-docs
+        stages: [pre-commit]
+        types: [markdown]
+        pass_filenames: false
